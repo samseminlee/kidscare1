@@ -1,11 +1,10 @@
-import Head from 'next/head';
-export default function App({ Component, pageProps }) {
+import '@/styles/globals.css';
+import { SessionProvider } from 'next-auth/react';
+
+export default function App({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <>
-      <Head>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-      </Head>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   );
 }

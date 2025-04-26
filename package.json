@@ -1,5 +1,5 @@
 {
-  "name": "childcare-mvp-tailwind-cdn",
+  "name": "childcare-mvp-tailwind-full",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",

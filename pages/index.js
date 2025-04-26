@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 export default function Home() {
   const [sitters, setSitters] = useState([]);
+  const [reviews, setReviews] = useState({});
   const [parentForm, setParentForm] = useState({
     parentName: '',
     childAge: '',
@@ -15,11 +16,13 @@ export default function Home() {
     sitterName: '',
     experience: '',
     languages: '',
-    availableTime: '',
+    availableFrom: '',
+    availableTo: '',
     location: '',
     photoUrl: '',
   });
   const [matchedSitter, setMatchedSitter] = useState(null);
+  const [reviewForm, setReviewForm] = useState({ rating: '5', comment: '' });
 
   const handleParentChange = (e) => {
     setParentForm({ ...parentForm, [e.target.name]: e.target.value });
@@ -27,6 +30,10 @@ export default function Home() {
 
   const handleSitterChange = (e) => {
     setSitterForm({ ...sitterForm, [e.target.name]: e.target.value });
+  };
+
+  const handleReviewChange = (e) => {
+    setReviewForm({ ...reviewForm, [e.target.name]: e.target.value });
   };
 
   const handleParentSubmit = () => {
@@ -42,9 +49,19 @@ export default function Home() {
     if (!sitterForm.photoUrl) sitterForm.photoUrl = 'https://via.placeholder.com/100';
     setSitters([...sitters, sitterForm]);
     setSitterForm({
-      sitterName: '', experience: '', languages: '', availableTime: '', location: '', photoUrl: '',
+      sitterName: '', experience: '', languages: '', availableFrom: '', availableTo: '', location: '', photoUrl: '',
     });
     alert('시터 등록 완료!');
+  };
+
+  const handleReviewSubmit = () => {
+    if (!matchedSitter) return;
+    setReviews({
+      ...reviews,
+      [matchedSitter.sitterName]: [...(reviews[matchedSitter.sitterName] || []), reviewForm]
+    });
+    setReviewForm({ rating: '5', comment: '' });
+    alert('후기 등록 완료!');
   };
 
   return (
@@ -61,9 +78,9 @@ export default function Home() {
             <input className="border p-2 rounded" name="parentName" placeholder="부모 이름" value={parentForm.parentName} onChange={handleParentChange} />
             <input className="border p-2 rounded" name="childAge" placeholder="아이 나이" value={parentForm.childAge} onChange={handleParentChange} />
             <input className="border p-2 rounded" name="location" placeholder="희망 지역" value={parentForm.location} onChange={handleParentChange} />
-            <label className="text-sm font-medium">돌봄 시작 시간</label>
+            <label>돌봄 시작 시간</label>
             <input className="border p-2 rounded" type="datetime-local" name="startTime" value={parentForm.startTime} onChange={handleParentChange} />
-            <label className="text-sm font-medium">돌봄 종료 시간</label>
+            <label>돌봄 종료 시간</label>
             <input className="border p-2 rounded" type="datetime-local" name="endTime" value={parentForm.endTime} onChange={handleParentChange} />
             <textarea className="border p-2 rounded" name="needs" placeholder="요청사항" value={parentForm.needs} onChange={handleParentChange}></textarea>
             <button className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600" onClick={handleParentSubmit}>신청하기</button>
@@ -76,8 +93,29 @@ export default function Home() {
               <p><strong>이름:</strong> {matchedSitter.sitterName}</p>
               <p><strong>경력:</strong> {matchedSitter.experience}</p>
               <p><strong>언어:</strong> {matchedSitter.languages}</p>
-              <p><strong>시간대:</strong> {matchedSitter.availableTime}</p>
+              <p><strong>시간:</strong> {matchedSitter.availableFrom} ~ {matchedSitter.availableTo}</p>
               <p><strong>지역:</strong> {matchedSitter.location}</p>
+
+              <div className="mt-4">
+                <h4 className="font-semibold">📝 시터 리뷰 남기기</h4>
+                <select name="rating" value={reviewForm.rating} onChange={handleReviewChange} className="border p-2 rounded w-full">
+                  {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                </select>
+                <textarea name="comment" className="border p-2 rounded w-full mt-2" placeholder="후기를 입력하세요" value={reviewForm.comment} onChange={handleReviewChange}></textarea>
+                <button onClick={handleReviewSubmit} className="bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 mt-2 w-full">후기 등록</button>
+              </div>
+
+              {reviews[matchedSitter.sitterName]?.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-semibold">📣 시터 리뷰:</h4>
+                  {reviews[matchedSitter.sitterName].map((r, i) => (
+                    <div key={i} className="text-sm border-t mt-2 pt-2">
+                      <p><strong>⭐ {r.rating}점</strong></p>
+                      <p>{r.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -88,7 +126,10 @@ export default function Home() {
             <input className="border p-2 rounded" name="sitterName" placeholder="이름" value={sitterForm.sitterName} onChange={handleSitterChange} />
             <input className="border p-2 rounded" name="experience" placeholder="경력" value={sitterForm.experience} onChange={handleSitterChange} />
             <input className="border p-2 rounded" name="languages" placeholder="가능 언어" value={sitterForm.languages} onChange={handleSitterChange} />
-            <input className="border p-2 rounded" name="availableTime" placeholder="가능 시간대" value={sitterForm.availableTime} onChange={handleSitterChange} />
+            <label>시작 가능 시간</label>
+            <input className="border p-2 rounded" type="datetime-local" name="availableFrom" value={sitterForm.availableFrom} onChange={handleSitterChange} />
+            <label>종료 가능 시간</label>
+            <input className="border p-2 rounded" type="datetime-local" name="availableTo" value={sitterForm.availableTo} onChange={handleSitterChange} />
             <input className="border p-2 rounded" name="location" placeholder="가능 지역" value={sitterForm.location} onChange={handleSitterChange} />
             <input className="border p-2 rounded" name="photoUrl" placeholder="사진 URL (선택)" value={sitterForm.photoUrl} onChange={handleSitterChange} />
             <button className="bg-green-500 text-white py-2 rounded hover:bg-green-600" onClick={handleSitterSubmit}>등록하기</button>

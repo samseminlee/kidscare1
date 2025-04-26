@@ -7,6 +7,10 @@ export default function Sitter() {
   });
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const handleSubmit = () => {
+    alert("시터 등록 신청이 완료되었습니다!");
+  };
+
   return (
     <div className="min-h-screen bg-white p-6 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold text-green-600 mb-4">🧑‍🏫 시터 등록 신청서</h2>
@@ -22,7 +26,7 @@ export default function Sitter() {
         <option value="Coquitlam">Coquitlam</option>
       </select>
       <input name="photoUrl" placeholder="사진 URL" onChange={handleChange} className="border p-2 rounded w-full mb-2" />
-      <button className="bg-green-500 text-white py-2 px-4 rounded w-full">등록하기</button>
+      <button onClick={handleSubmit} className="bg-green-500 text-white py-2 px-4 rounded w-full">등록하기</button>
     </div>
   );
 }
